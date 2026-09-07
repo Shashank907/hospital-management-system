@@ -1,6 +1,8 @@
 package com.shashankcdr.hospitalSystem.controller;
 
+import com.shashankcdr.hospitalSystem.dto.DoctorResponseDto;
 import com.shashankcdr.hospitalSystem.dto.PatientResponseDto;
+import com.shashankcdr.hospitalSystem.service.DoctorService;
 import com.shashankcdr.hospitalSystem.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.List;
 public class AdminController {
 
     private final PatientService patientService;
+    private final DoctorService doctorService;
 
     @GetMapping("/patients")
     public ResponseEntity<List<PatientResponseDto>> getAllPatients(
@@ -24,5 +27,8 @@ public class AdminController {
             @RequestParam(value = "size", defaultValue = "10") Integer pageSize
     ) {
         return ResponseEntity.ok(patientService.getAllPatients(pageNumber, pageSize));
+    }
+    @GetMapping("/doctors") public ResponseEntity<List<DoctorResponseDto>> getAllDoctors() {
+        return ResponseEntity.ok( doctorService.getAllDoctors() );
     }
 }
