@@ -1,5 +1,6 @@
 package com.shashankcdr.hospitalSystem.entity;
 
+import com.shashankcdr.hospitalSystem.entity.type.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,4 +34,8 @@ public class Appointment {
     @ToString.Exclude
     @JoinColumn(nullable = false)
     private Doctor doctor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AppointmentStatus status;
 }

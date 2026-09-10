@@ -7,6 +7,7 @@ import com.shashankcdr.hospitalSystem.dto.SignupResponseDto;
 import com.shashankcdr.hospitalSystem.entity.User;
 import com.shashankcdr.hospitalSystem.entity.type.Role;
 import com.shashankcdr.hospitalSystem.repository.UserRepository;
+import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,7 +39,7 @@ public class AuthService {
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
         User user=userRepository.findByUsername(signupRequestDto.getUsername()).orElse(null);
 
-        if(user !=null) throw new IllegalArgumentException("User already exists");
+        if(user !=null) throw new DuplicateRequestException("User already exists");
 
         user=userRepository.save(User.builder()
                 .username(signupRequestDto.getUsername())

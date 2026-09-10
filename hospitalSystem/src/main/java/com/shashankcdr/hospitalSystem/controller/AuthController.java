@@ -5,6 +5,7 @@ import com.shashankcdr.hospitalSystem.dto.LoginResponseDto;
 import com.shashankcdr.hospitalSystem.dto.SignupRequestDto;
 import com.shashankcdr.hospitalSystem.dto.SignupResponseDto;
 import com.shashankcdr.hospitalSystem.security.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponseDto>  signup(@RequestBody SignupRequestDto signupRequestDto){
+    public ResponseEntity<SignupResponseDto>  signup(@RequestBody @Valid SignupRequestDto signupRequestDto){
         return ResponseEntity.ok(authService.signup(signupRequestDto));
     }
 }
