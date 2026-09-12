@@ -20,7 +20,7 @@ public class BillController {
 
     private final BillService billService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'RECEPTIONIST')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     @PostMapping
     public ResponseEntity<BillResponseDto> createBill(
             @RequestBody @Valid CreateBillRequestDto request) {
@@ -49,14 +49,5 @@ public class BillController {
         );
     }
 
-    @PatchMapping("/{billId}/payment-status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
-    public ResponseEntity<BillResponseDto> updatePaymentStatus(
-            @PathVariable Long billId,
-            @RequestParam PaymentStatus paymentStatus) {
 
-        return ResponseEntity.ok(
-                billService.updatePaymentStatus(billId, paymentStatus)
-        );
-    }
 }

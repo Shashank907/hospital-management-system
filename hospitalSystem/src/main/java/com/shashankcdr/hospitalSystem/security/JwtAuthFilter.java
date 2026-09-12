@@ -54,9 +54,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .orElse(null);
 
                 if (user != null) {
-                    System.out.println("USERNAME: " + user.getUsername());
-                    System.out.println("ROLE: " + user.getRole());
-                    System.out.println("AUTHORITIES: " + user.getAuthorities());
+//                    System.out.println("USERNAME: " + user.getUsername());
+//                    System.out.println("ROLE: " + user.getRole());
+//                    System.out.println("AUTHORITIES: " + user.getAuthorities());
+                    log.debug("Authenticated username: {}", user.getUsername());
+                    log.debug("Authenticated role: {}", user.getRole());
+                    log.debug("Authorities: {}", user.getAuthorities());
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     user,
