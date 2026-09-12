@@ -4,18 +4,18 @@ import com.shashankcdr.hospitalSystem.dto.CreatePatientRequestDto;
 import com.shashankcdr.hospitalSystem.dto.PatientResponseDto;
 import com.shashankcdr.hospitalSystem.entity.Patient;
 import com.shashankcdr.hospitalSystem.entity.User;
+import com.shashankcdr.hospitalSystem.exception.ResourceAlreadyExistsException;
+import com.shashankcdr.hospitalSystem.exception.ResourceNotFoundException;
 import com.shashankcdr.hospitalSystem.repository.PatientRepository;
 import com.shashankcdr.hospitalSystem.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -24,18 +24,19 @@ public class PatientService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PatientResponseDto getPatientById(Long patientId) {
-        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new EntityNotFoundException("Patient Not " +
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient Not " +
                 "Found with id: " + patientId));
         return modelMapper.map(patient, PatientResponseDto.class);
     }
 
+    @Transactional(readOnly = true)
     public List<PatientResponseDto> getAllPatients(Integer pageNumber, Integer pageSize) {
         return patientRepository.findAllPatients(PageRequest.of(pageNumber, pageSize))
                 .stream()
                 .map(patient -> modelMapper.map(patient, PatientResponseDto.class))
-                .collect(Collectors.toList());
+                .toList();
     }
     @Transactional
     public PatientResponseDto createPatientProfile(
@@ -45,13 +46,13 @@ public class PatientService {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
-                        new EntityNotFoundException(
+                        new ResourceNotFoundException(
                                 "User not found: " + username
                         )
                 );
 
         if (patientRepository.findByUserUsername(username).isPresent()) {
-            throw new IllegalArgumentException(
+            throw new ResourceAlreadyExistsException(
                     "Patient profile already exists"
             );
         }
@@ -75,12 +76,13 @@ public class PatientService {
         );
     }
 
+    @Transactional(readOnly = true)
     public  PatientResponseDto getPatientProfileByUsername(String username) {
 
         Patient patient = patientRepository
                 .findByUserUsername(username)
                 .orElseThrow(() ->
-                        new EntityNotFoundException(
+                        new ResourceNotFoundException(
                                 "Patient not found for username: " + username
                         )
                 );
@@ -88,13 +90,13 @@ public class PatientService {
         return modelMapper.map(patient, PatientResponseDto.class);
     }
 
-
+     @Transactional(readOnly = true)
     public PatientResponseDto getMyProfile(String username) {
 
         Patient patient = patientRepository
                 .findByUserUsername(username)
                 .orElseThrow(() ->
-                        new EntityNotFoundException(
+                        new ResourceNotFoundException(
                                 "Patient profile not found"
                         )
                 );
@@ -105,6 +107,7 @@ public class PatientService {
         );
     }
 
+    @Transactional
     public PatientResponseDto updateMyProfile(
             CreatePatientRequestDto request,
             String username
@@ -113,7 +116,7 @@ public class PatientService {
         Patient patient = patientRepository
                 .findByUserUsername(username)
                 .orElseThrow(() ->
-                        new EntityNotFoundException(
+                        new ResourceNotFoundException(
                                 "Patient profile not found"
                         )
                 );
