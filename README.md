@@ -1,546 +1,685 @@
 # 🏥 Hospital Management System
 
-A backend REST API for managing hospital operations such as patients, doctors, appointments, authentication, and role-based access control.
+A production-oriented **Hospital Management System backend** built using **Java, Spring Boot, Spring Security, JWT, MySQL, Swagger/OpenAPI, and Docker**.
 
-Built with **Java, Spring Boot, Spring Security, JWT, Spring Data JPA, Hibernate, and MySQL**, following a layered architecture and production-oriented backend practices.
+The system provides REST APIs for managing patients, doctors, appointments, departments, insurance, prescriptions, billing, payments, and user authentication with role-based access control.
 
 ---
 
 ## 🚀 Features
 
-### 🔐 Authentication & Authorization
+### 🔐 Authentication & Security
 
-* User signup and login
+* User registration and login
 * JWT-based authentication
-* Stateless authentication
-* Spring Security integration
-* Method-level Role-Based Access Control (RBAC)
-* Role-based authorization using `@PreAuthorize`
+* Password encryption using BCrypt
+* Role-Based Access Control (RBAC)
+* Protected REST endpoints
+* Stateless Spring Security configuration
+* Custom JWT authentication filter
+* Environment-based configuration for sensitive values
+
+### 👥 User & Role Management
+
+* User management
+* Role-based authorization
+* Admin-controlled role updates
 * Supported roles:
 
     * `ADMIN`
     * `DOCTOR`
     * `PATIENT`
-    * `RECEPTIONIST`
 
-Example:
+### 🧑‍⚕️ Doctor Management
 
-```java
-@PreAuthorize("hasRole('PATIENT')")
-```
+* Create and manage doctors
+* Doctor information management
+* Department association
+* Doctor-specific operations
 
-Multiple roles:
+### 🧑‍🦽 Patient Management
 
-```java
-@PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'RECEPTIONIST')")
-```
-
-Authentication is handled through a custom JWT filter.
-
----
-
-### 👨‍⚕️ Doctor Management
-
-* Doctor management
-* Doctor specialization
-* Doctor information
-* Doctor appointment management
-* Reassign appointments to doctors
-
----
-
-### 🧑‍⚕️ Patient Management
-
-* Create patient profile
-* Get logged-in patient's profile
-* Update patient profile
-* Get patient's appointments
-* Patient request validation
-* Patient-specific authorization
-
----
+* Patient registration
+* Patient profile management
+* Patient appointment management
+* Insurance association
+* User-to-patient mapping
 
 ### 📅 Appointment Management
 
 * Create appointments
-* Get appointment by ID
-* Get all appointments
 * Update appointments
-* Update appointment status
-* Get doctor's appointments
-* Get logged-in patient's appointments
-* Reassign appointments to another doctor
-* Appointment status transition validation
+* Appointment status management
+* Doctor-patient appointment relationship
+* Role-based appointment access
 
-Supported appointment statuses include:
+### 🏥 Department Management
 
-```text
-SCHEDULED
-CONFIRMED
-COMPLETED
-CANCELLED
-```
+* Department management
+* Doctor-department relationships
+* Hospital department operations
 
-Invalid appointment status transitions are rejected by the backend.
+### 💊 Prescription Management
 
----
+* Create prescriptions
+* Prescription medicine management
+* Prescription retrieval
+* Doctor-patient prescription workflow
 
-## 📊 Pagination & Sorting
+### 🧾 Billing
 
-Appointment APIs support pagination and sorting using Spring Data JPA.
+* Create patient bills
+* Bill management
+* Bill payment status tracking
+* Patient billing workflow
 
-### Pagination
+### 💳 Payment Management
 
-```http
-GET /appointments?page=0&size=10
-```
+* Payment creation
+* Payment status tracking
+* Multiple payment methods
+* Bill-payment relationship
 
-### Ascending sorting
+### 🛡️ Insurance
 
-```http
-GET /appointments?page=0&size=10&sortBy=appointmentTime&direction=asc
-```
+* Patient insurance management
+* Insurance information retrieval
+* Patient-insurance relationship
 
-### Descending sorting
+### ⚠️ Production-Oriented Features
 
-```http
-GET /appointments?page=0&size=10&sortBy=appointmentTime&direction=desc
-```
-
-The API returns Spring Data's `Page` response containing information such as:
-
-* Current page
-* Page size
-* Total elements
-* Total pages
-* Content
-
----
-
-## ✅ Request Validation
-
-The application uses **Jakarta Bean Validation** for validating incoming request data.
-
-Validation annotations currently used include:
-
-* `@NotBlank`
-* `@NotNull`
-* `@Email`
-* `@Size`
-* `@Past`
-* `@Future`
-
-Example:
-
-```java
-@NotBlank(message = "Name is required")
-private String name;
-```
-
-Invalid requests return a structured `400 Bad Request` response.
-
----
-
-## ⚠️ Global Exception Handling
-
-Centralized exception handling is implemented using:
-
-```java
-@RestControllerAdvice
-```
-
-Currently handled exceptions include:
-
-* Validation errors
-* Resource not found
-* Invalid appointment state transitions
-
-Example error response:
-
-```json
-{
-  "status": 404,
-  "message": "Appointment not found with ID: 999",
-  "timestamp": "2026-09-11T01:27:00",
-  "errors": null
-}
-```
-
----
-
-## 🏗️ Project Architecture
-
-The project follows a layered architecture:
-
-```text
-com.shashankcdr.hospitalSystem
-│
-├── controller
-│   ├── AppointmentController
-│   ├── PatientController
-│   ├── DoctorController
-│   └── ...
-│
-├── service
-│   ├── AppointmentService
-│   ├── PatientService
-│   ├── DoctorService
-│   └── ...
-│
-├── repository
-│   ├── AppointmentRepository
-│   ├── PatientRepository
-│   ├── DoctorRepository
-│   └── ...
-│
-├── entity
-│   ├── User
-│   ├── Patient
-│   ├── Doctor
-│   ├── Appointment
-│   ├── Department
-│   └── Insurance
-│
-├── dto
-│   ├── CreateAppointmentRequestDto
-│   ├── UpdateAppointmentRequestDto
-│   ├── AppointmentResponseDto
-│   ├── CreatePatientRequestDto
-│   └── ...
-│
-├── security
-│   ├── JwtAuthFilter
-│   ├── WebSecurityConfig
-│   └── ...
-│
-├── exception
-│   ├── GlobalExceptionHandler
-│   ├── ErrorResponse
-│   └── ResourceNotFoundException
-│
-└── HospitalSystemApplication
-```
-
----
-
-## 🔐 Security Flow
-
-The application uses stateless JWT authentication.
-
-```text
-Client
-   │
-   ▼
-POST /auth/login
-   │
-   ▼
-Username + Password
-   │
-   ▼
-Spring Security Authentication
-   │
-   ▼
-JWT Token
-   │
-   ▼
-Client sends:
-Authorization: Bearer <JWT>
-   │
-   ▼
-JwtAuthFilter
-   │
-   ▼
-JWT validation
-   │
-   ▼
-Authentication
-   │
-   ▼
-Method-level authorization
-   │
-   ▼
-@PreAuthorize
-   │
-   ▼
-Controller
-```
-
-Public endpoints are configured using:
-
-```java
-.requestMatchers("/public/**", "/auth/**").permitAll()
-```
-
-All other requests require authentication:
-
-```java
-.anyRequest().authenticated()
-```
-
-The application uses:
-
-```java
-SessionCreationPolicy.STATELESS
-```
-
-and CSRF protection is disabled because the API uses stateless JWT authentication.
-
----
-
-## 🗄️ Database
-
-The application uses **MySQL** with **Spring Data JPA**, **Hibernate**, and JPA entity relationships.
-
-Main entities include:
-
-```text
-User
- │
- ├── Patient
- │
- └── Role
-
-Doctor
- │
- └── Appointment
-
-Patient
- │
- └── Appointment
-
-Department
-Insurance
-Appointment
-```
+* Global exception handling
+* Custom exceptions
+* DTO-based API design
+* Request validation
+* Centralized error responses
+* Swagger/OpenAPI documentation
+* Docker containerization
+* Docker Compose
+* MySQL persistent volume
+* Environment variable configuration
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Technology         | Usage                          |
-| ------------------ | ------------------------------ |
-| Java 24            | Programming Language           |
-| Spring Boot 4.1.1  | Backend Framework              |
-| Spring Security    | Authentication & Authorization |
-| JWT                | Authentication                 |
-| Spring Data JPA    | Data Access                    |
-| Hibernate          | ORM                            |
-| MySQL              | Database                       |
-| Jakarta Validation | Request Validation             |
-| Lombok             | Boilerplate Reduction          |
-| ModelMapper        | DTO ↔ Entity Mapping           |
-| Maven              | Build & Dependency Management  |
-| Git & GitHub       | Version Control                |
-| Postman            | API Testing                    |
+| Technology        | Purpose                        |
+| ----------------- | ------------------------------ |
+| Java 21           | Programming language           |
+| Spring Boot       | Backend framework              |
+| Spring Security   | Authentication & authorization |
+| JWT               | Stateless authentication       |
+| Spring Data JPA   | Database access                |
+| Hibernate         | ORM                            |
+| MySQL 8           | Relational database            |
+| Maven             | Dependency management & build  |
+| Lombok            | Boilerplate reduction          |
+| Swagger / OpenAPI | API documentation              |
+| Docker            | Containerization               |
+| Docker Compose    | Multi-container orchestration  |
+| Git & GitHub      | Version control                |
 
 ---
 
-## 📡 API Endpoints
+## 🏗️ Architecture
 
-### Authentication
-
-| Method | Endpoint       | Description                        |
-| ------ | -------------- | ---------------------------------- |
-| POST   | `/auth/signup` | Register a user                    |
-| POST   | `/auth/login`  | Authenticate user and generate JWT |
+```text
+                    ┌──────────────────────┐
+                    │      Client          │
+                    │ Postman / Swagger /  │
+                    │    React Frontend    │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │   Spring Boot API    │
+                    │                      │
+                    │ Controllers          │
+                    │ Services             │
+                    │ Repositories          │
+                    │ DTOs                  │
+                    └──────────┬───────────┘
+                               │
+                  ┌────────────┴────────────┐
+                  │                         │
+                  ▼                         ▼
+        ┌─────────────────┐       ┌─────────────────┐
+        │ Spring Security │       │ Global Exception│
+        │ JWT + RBAC      │       │ Handler         │
+        └─────────────────┘       └─────────────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │       MySQL 8        │
+                    │    hospital_db       │
+                    └──────────────────────┘
+```
 
 ---
 
-### Patient
+## 📂 Project Structure
 
-| Method | Endpoint                    | Description                        |
-| ------ | --------------------------- | ---------------------------------- |
-| POST   | `/patients/profile`         | Create patient profile             |
-| GET    | `/patients/me`              | Get logged-in patient's profile    |
-| PUT    | `/patients/me`              | Update logged-in patient's profile |
-| GET    | `/patients/me/appointments` | Get patient's appointments         |
+```text
+hospital-management-system/
+│
+├── hospitalSystem/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── com/shashankcdr/hospitalSystem/
+│   │   │   │
+│   │   │   │       ├── config/
+│   │   │   │       ├── controller/
+│   │   │   │       ├── dto/
+│   │   │   │       ├── entity/
+│   │   │   │       ├── exception/
+│   │   │   │       ├── repository/
+│   │   │   │       ├── security/
+│   │   │   │       └── service/
+│   │   │   │
+│   │   │   └── resources/
+│   │   │       ├── application.properties
+│   │   │       └── data.sql
+│   │   │
+│   │   ├── Dockerfile
+│   │   ├── docker-compose.yml
+│   │   └── pom.xml
+│   │
+│   ├── .gitignore
+│   └── README.md
+```
 
 ---
 
-### Appointments
+## 📡 API Modules
 
-| Method | Endpoint                    | Description                              |
-| ------ | --------------------------- | ---------------------------------------- |
-| POST   | `/appointments`             | Create appointment                       |
-| GET    | `/appointments/{id}`        | Get appointment by ID                    |
-| GET    | `/appointments`             | Get appointments with pagination/sorting |
-| PUT    | `/appointments/{id}`        | Update appointment                       |
-| PATCH  | `/appointments/{id}/status` | Update appointment status                |
+The application currently provides approximately **28 REST APIs** across the following modules:
+
+```text
+Authentication
+├── Signup
+└── Login
+
+Users / Admin
+├── User management
+└── Role management
+
+Patients
+├── Patient management
+├── Profile
+└── Patient appointments
+
+Doctors
+├── Doctor management
+└── Doctor operations
+
+Departments
+└── Department management
+
+Appointments
+├── Create
+├── Update
+├── Status management
+└── Retrieval
+
+Prescriptions
+├── Create prescription
+├── Medicines
+└── Retrieval
+
+Billing
+├── Create bill
+└── Bill management
+
+Payments
+├── Create payment
+└── Payment management
+
+Insurance
+└── Insurance management
+```
 
 ---
 
-## 🧪 API Testing
+## 🔐 Authentication Flow
 
-The APIs are tested using **Postman**.
+The application uses **JWT-based stateless authentication**.
 
-Recommended authentication flow:
+```text
+User
+ │
+ │ Login
+ ▼
+/auth/login
+ │
+ ▼
+Spring Security
+ │
+ ▼
+AuthenticationManager
+ │
+ ▼
+JWT Generated
+ │
+ ▼
+Client
+ │
+ │ Authorization: Bearer <JWT>
+ ▼
+JwtAuthFilter
+ │
+ ▼
+Validate Token
+ │
+ ▼
+Load User & Role
+ │
+ ▼
+RBAC Authorization
+ │
+ ▼
+Controller
+```
+
+Example:
+
+```http
+Authorization: Bearer <your-jwt-token>
+```
+
+---
+
+## 👮 Role-Based Access Control
+
+Access to protected resources is controlled using Spring Security and roles.
+
+Example:
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
+```
+
+This ensures that sensitive administrative operations cannot be accessed by unauthorized users.
+
+---
+
+## 📖 API Documentation
+
+Swagger/OpenAPI is integrated into the project for interactive API documentation and testing.
+
+After starting the application, open:
+
+```text
+http://localhost:8080/api/swagger-ui.html
+```
+
+OpenAPI specification:
+
+```text
+http://localhost:8080/api/v3/api-docs
+```
+
+You can use Swagger to:
+
+* Explore APIs
+* View request/response models
+* Test endpoints
+* Send authenticated requests
+* Understand API contracts
+
+---
+
+## 🐳 Running with Docker
+
+The project is containerized using Docker and Docker Compose.
+
+### Prerequisites
+
+Install:
+
+* Docker Desktop
+* Git
+
+No local MySQL installation is required when using Docker Compose.
+
+---
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Shashank907/hospital-management-system.git
+```
+
+```bash
+cd hospital-management-system
+```
+
+---
+
+### 2. Configure environment variables
+
+Create a `.env` file inside the project root.
+
+```env
+MYSQL_ROOT_PASSWORD=your_mysql_password
+JWT_SECRETKEY=your_jwt_secret_key
+```
+
+> Never commit `.env` to GitHub.
+
+---
+
+### 3. Start the application
+
+```bash
+docker compose up -d
+```
+
+Docker Compose starts:
+
+```text
+hospital-mysql
+hospital-system
+```
+
+---
+
+### 4. Check containers
+
+```bash
+docker compose ps
+```
+
+Expected services:
+
+```text
+hospital-mysql
+hospital-system
+```
+
+---
+
+### 5. View application logs
+
+```bash
+docker compose logs -f app
+```
+
+---
+
+### 6. Stop the application
+
+```bash
+docker compose down
+```
+
+The MySQL volume is preserved, so database data is not removed.
+
+> Do not use `docker compose down -v` unless you intentionally want to delete the database volume.
+
+---
+
+## 🐳 Docker Architecture
+
+```text
+                 Docker Compose
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+          ▼                         ▼
+ ┌─────────────────┐       ┌──────────────────┐
+ │ Spring Boot App │       │     MySQL 8      │
+ │                 │       │                  │
+ │ Port: 8080      │──────▶│ Port: 3306       │
+ │                 │  db   │                  │
+ └─────────────────┘       └──────────────────┘
+          │                         │
+          └────────── Docker ───────┘
+                    Network
+
+Host:
+8080 → Spring Boot
+3307 → MySQL
+```
+
+The Spring Boot application communicates with MySQL using the Docker Compose service name:
+
+```text
+jdbc:mysql://db:3306/hospital_db
+```
+
+---
+
+## ⚙️ Local Development Without Docker
+
+If you want to run the application directly with Java and a local MySQL installation:
+
+### Configure MySQL
+
+Create:
+
+```text
+hospital_db
+```
+
+Then configure your database credentials in `application.properties` or environment variables.
+
+### Build the project
+
+Windows:
+
+```powershell
+.\mvnw.cmd clean package "-Dmaven.test.skip=true"
+```
+
+### Run the application
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+The application runs on:
+
+```text
+http://localhost:8080/api
+```
+
+---
+
+## 🧪 Testing APIs
+
+The APIs can be tested using:
+
+* Swagger UI
+* Postman
+* REST clients
+
+Recommended authentication workflow:
 
 ```text
 1. Signup
       ↓
 2. Login
       ↓
-3. Receive JWT
+3. Copy JWT
       ↓
-4. Add JWT as Bearer Token
+4. Add Bearer Token
       ↓
 5. Access protected APIs
-      ↓
-6. Test role-based authorization
-```
-
-Example authorization header:
-
-```http
-Authorization: Bearer <JWT_TOKEN>
 ```
 
 ---
 
-## ⚙️ Configuration
+## 🗄️ Database
 
-Create the MySQL database:
-
-```sql
-CREATE DATABASE hospital_db;
-```
-
-Configure your database credentials in:
+Database:
 
 ```text
-src/main/resources/application.properties
+MySQL 8
 ```
 
-Example:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/hospital_db
-spring.datasource.username=root
-spring.datasource.password=YOUR_PASSWORD
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-```
-
-> Replace `YOUR_PASSWORD` with your local MySQL password.
-
----
-
-## ▶️ Running the Application
-
-### 1. Clone the repository
-
-```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-```
-
-### 2. Open the project
-
-Open the project in IntelliJ IDEA or another Java IDE.
-
-### 3. Configure MySQL
-
-Create the `hospital_db` database and configure your MySQL credentials.
-
-### 4. Build the project
-
-```bash
-mvn clean install
-```
-
-### 5. Run the application
-
-```bash
-mvn spring-boot:run
-```
-
-The application runs on:
+Database name:
 
 ```text
-http://localhost:8080
+hospital_db
+```
+
+The application uses:
+
+* Spring Data JPA
+* Hibernate
+* Entity relationships
+* Repository pattern
+* Transactional service operations
+
+Docker uses a persistent volume:
+
+```text
+hospital-mysql-data
+```
+
+This allows database data to survive container recreation.
+
+---
+
+## 🛡️ Error Handling
+
+The application uses centralized exception handling with a global exception handler.
+
+Examples include:
+
+```text
+ResourceNotFoundException
+ResourceAlreadyExistsException
+Validation errors
+Authentication errors
+Authorization errors
+```
+
+API errors are returned using a consistent response structure.
+
+---
+
+## 📦 Main Domain Entities
+
+```text
+User
+ │
+ ├── Patient
+ │     └── Insurance
+ │
+ └── Role
+
+Doctor
+ │
+ ├── Department
+ └── Appointment
+
+Patient
+ │
+ ├── Appointment
+ ├── Prescription
+ ├── Bill
+ ├── Payment
+ └── Insurance
 ```
 
 ---
 
-## 📌 Production-Oriented Development
+## 🔄 Development Workflow
 
-This project is being developed with real-world backend development practices, including:
+The project uses Git for version control.
 
-* RESTful API design
-* Layered architecture
-* DTO-based API design
+Main development branch:
+
+```text
+main
+```
+
+Production-focused development was performed on:
+
+```text
+production-level
+```
+
+Typical workflow:
+
+```bash
+git switch production-level
+
+# Make changes
+
+git add .
+
+git commit -m "Your commit message"
+
+git push origin production-level
+```
+
+After completing and testing production-level changes, they can be merged into `main`.
+
+---
+
+## 📌 Production-Oriented Improvements
+
+The project was designed with production concepts rather than only basic CRUD operations.
+
+Implemented:
+
 * JWT authentication
-* Role-Based Access Control
+* Role-based authorization
+* DTO-based API layer
 * Request validation
 * Global exception handling
-* Pagination
-* Sorting
-* Transaction management
-* JPA/Hibernate relationships
-* Centralized error responses
-* Git version control
+* Custom exceptions
+* Swagger/OpenAPI
+* Environment variables
+* Docker
+* Docker Compose
+* MySQL persistent storage
+* Modular service/repository architecture
+* Billing and payment workflow
+* Prescription management
 
 ---
 
-## 🔮 Future Improvements
+## 🚧 Future Improvements
 
-The following features are planned as the project continues to evolve:
+Planned improvements include:
 
-* [ ] Appointment conflict checking
-* [ ] Safe pagination and sorting validation
-* [ ] Standard API response wrapper
-* [ ] Audit fields (`createdAt`, `updatedAt`)
-* [ ] Logging
-* [ ] Swagger/OpenAPI documentation
-* [ ] Password reset
-* [ ] Email notifications
-* [ ] Appointment reminders
-* [ ] Payment integration
-* [ ] Automated testing
-* [ ] React frontend
-* [ ] Docker containerization
-* [ ] CI/CD pipeline
-* [ ] Cloud deployment
+* React frontend
+* Cloud deployment
+* CI/CD pipeline
+* Automated tests
+* Redis caching
+* Monitoring and logging
+* Email/notification service
+* Pagination and sorting
+* Rate limiting
+* Production database migration strategy
 
 ---
 
-## 🎯 Project Goal
+## 🎯 Learning Outcomes
 
-The goal of this project is to build a **production-oriented Hospital Management System** while gaining practical experience in Java backend development and modern Spring Boot technologies.
+Through this project, I practiced:
 
-Development roadmap:
-
-```text
-Java
-  ↓
-Spring Boot
-  ↓
-REST APIs
-  ↓
-Spring Security
-  ↓
-JWT Authentication
-  ↓
-RBAC
-  ↓
-Validation
-  ↓
-Exception Handling
-  ↓
-Pagination & Sorting
-  ↓
-Production Features
-  ↓
-Testing
-  ↓
-Swagger/OpenAPI
-  ↓
-React Frontend
-  ↓
-Docker
-  ↓
-Cloud Deployment
-```
+* Java backend development
+* Spring Boot REST API development
+* Spring Security
+* JWT authentication
+* RBAC
+* Spring Data JPA
+* Hibernate
+* MySQL
+* DTO design
+* Exception handling
+* API validation
+* Swagger/OpenAPI
+* Docker
+* Docker Compose
+* Git/GitHub
+* Production-oriented backend architecture
 
 ---
 
@@ -548,17 +687,21 @@ Cloud Deployment
 
 **Shashank Pandey**
 
-B.Tech Computer Science & Engineering — 2026
+Java Backend Developer | Spring Boot | MySQL | Docker
 
-### Interests
+### Profiles
 
-* Java Backend Development
-* Spring Boot
-* REST APIs
-* Spring Security
-* Full-Stack Development
-* Data Structures & Algorithms
+* GitHub: `https://github.com/Shashank907`
+* LeetCode: `https://leetcode.com/u/Shekharr21/`
 
 ---
 
-⭐ If you find this project useful, consider giving the repository a star.
+## ⭐ Project
+
+If you find this project useful, consider giving the repository a ⭐ on GitHub.
+
+---
+
+## 📄 License
+
+This project is created for learning, portfolio, and educational purposes.
