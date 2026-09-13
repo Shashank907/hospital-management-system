@@ -1,9 +1,6 @@
 package com.shashankcdr.hospitalSystem.controller;
 
-import com.shashankcdr.hospitalSystem.dto.AppointmentResponseDto;
-import com.shashankcdr.hospitalSystem.dto.CreateAppointmentRequestDto;
-import com.shashankcdr.hospitalSystem.dto.CreatePatientRequestDto;
-import com.shashankcdr.hospitalSystem.dto.PatientResponseDto;
+import com.shashankcdr.hospitalSystem.dto.*;
 import com.shashankcdr.hospitalSystem.service.AppointmentService;
 import com.shashankcdr.hospitalSystem.service.PatientService;
 import jakarta.validation.Valid;
@@ -24,13 +21,20 @@ public class PatientController {
     private final PatientService patientService;
     private final AppointmentService appointmentService;
 
-    @PostMapping("/appointments")
+    @PreAuthorize("hasRole('PATIENT')")
+    @PostMapping("/me/appointments")
     public ResponseEntity<AppointmentResponseDto> createNewAppointment(
-            @Valid @RequestBody CreateAppointmentRequestDto createAppointmentRequestDto) {
+            @Valid @RequestBody CreatePatientAppointmentRequestDto request,
+            Authentication authentication) {
+
+        String username = authentication.getName();
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(appointmentService.createNewAppointment(createAppointmentRequestDto));
+                .body(appointmentService.createNewAppointment(
+                        request,
+                        username
+                ));
     }
 
     @PreAuthorize("hasRole('PATIENT')")

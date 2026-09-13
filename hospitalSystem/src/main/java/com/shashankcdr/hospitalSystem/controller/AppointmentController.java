@@ -20,23 +20,29 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'RECEPTIONIST', 'PATIENT')")
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public AppointmentResponseDto createAppointment(
-            @RequestBody @Valid CreateAppointmentRequestDto request) {
 
-        return appointmentService.createNewAppointment(request);
-    }
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST', 'DOCTOR')")
     @GetMapping("/{appointmentId}")
     public ResponseEntity<AppointmentResponseDto> getAppointmentById(
-            @PathVariable Long appointmentId) {
+            @PathVariable Long appointmentId
+    ) {
 
         return ResponseEntity.ok(
                 appointmentService.getAppointmentById(appointmentId)
         );
     }
 
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public AppointmentResponseDto createAppointment(
+            @RequestBody @Valid CreateAppointmentRequestDto request) {
+
+        return appointmentService.createNewAppointmentByStaff(request);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST', 'DOCTOR')")
     @GetMapping
     public ResponseEntity<Page<AppointmentResponseDto>> getAllAppointments(
             @RequestParam(defaultValue = "0") int page,
@@ -53,7 +59,7 @@ public class AppointmentController {
                 )
         );
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     @PutMapping("/{appointmentId}")
     public ResponseEntity<AppointmentResponseDto> updateAppointment(
             @PathVariable Long appointmentId,

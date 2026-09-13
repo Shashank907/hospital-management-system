@@ -2,6 +2,7 @@ package com.shashankcdr.hospitalSystem.service;
 
 import com.shashankcdr.hospitalSystem.dto.AppointmentResponseDto;
 import com.shashankcdr.hospitalSystem.dto.CreateAppointmentRequestDto;
+import com.shashankcdr.hospitalSystem.dto.CreatePatientAppointmentRequestDto;
 import com.shashankcdr.hospitalSystem.dto.UpdateAppointmentRequestDto;
 import com.shashankcdr.hospitalSystem.entity.Appointment;
 import com.shashankcdr.hospitalSystem.entity.Doctor;
@@ -11,8 +12,8 @@ import com.shashankcdr.hospitalSystem.exception.ResourceNotFoundException;
 import com.shashankcdr.hospitalSystem.repository.AppointmentRepository;
 import com.shashankcdr.hospitalSystem.repository.DoctorRepository;
 import com.shashankcdr.hospitalSystem.repository.PatientRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -32,30 +33,93 @@ public class AppointmentService {
     private final ModelMapper modelMapper;
 
 
-        @Transactional
-        public AppointmentResponseDto createNewAppointment(CreateAppointmentRequestDto createAppointmentRequestDto) {
-            Long doctorId = createAppointmentRequestDto.getDoctorId();
-            Long patientId = createAppointmentRequestDto.getPatientId();
+    @Transactional
+    public AppointmentResponseDto createNewAppointment(
+            CreatePatientAppointmentRequestDto request,
+            String username
+    ) {
 
-            Patient patient = patientRepository.findById(patientId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + patientId));
-            Doctor doctor = doctorRepository.findById(doctorId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with ID: " + doctorId));
+        Patient patient = patientRepository
+                .findByUserUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Patient profile not found for user: " + username
+                        )
+                );
+
+            Doctor doctor = doctorRepository
+                    .findById(request.getDoctorId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Doctor not found with ID: " + request.getDoctorId()
+                            )
+                    );
+
             Appointment appointment = Appointment.builder()
-                    .reason(createAppointmentRequestDto.getReason())
-                    .appointmentTime(createAppointmentRequestDto.getAppointmentTime())
+                    .reason(request.getReason())
+                    .appointmentTime(request.getAppointmentTime())
                     .status(AppointmentStatus.SCHEDULED)
+                    .patient(patient)
+                    .doctor(doctor)
                     .build();
 
-            appointment.setPatient(patient);
-            appointment.setDoctor(doctor);
-            patient.getAppointments().add(appointment); // to maintain consistency
+            patient.getAppointments().add(appointment);
+            doctor.getAppointments().add(appointment);
 
-            appointment = appointmentRepository.save(appointment);
-            return modelMapper.map(appointment, AppointmentResponseDto.class);
+            Appointment savedAppointment =
+                    appointmentRepository.save(appointment);
+
+            return modelMapper.map(
+                    savedAppointment,
+                    AppointmentResponseDto.class
+            );
         }
 
-        @Transactional
+
+    @Transactional
+    public AppointmentResponseDto createNewAppointmentByStaff(
+            CreateAppointmentRequestDto request
+    ) {
+
+        Patient patient = patientRepository
+                .findById(request.getPatientId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Patient not found with ID: " + request.getPatientId()
+                        )
+                );
+
+        Doctor doctor = doctorRepository
+                .findById(request.getDoctorId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Doctor not found with ID: " + request.getDoctorId()
+                        )
+                );
+
+        Appointment appointment = Appointment.builder()
+                .reason(request.getReason())
+                .appointmentTime(request.getAppointmentTime())
+                .status(AppointmentStatus.SCHEDULED)
+                .patient(patient)
+                .doctor(doctor)
+                .build();
+
+        patient.getAppointments().add(appointment);
+        doctor.getAppointments().add(appointment);
+
+        Appointment savedAppointment =
+                appointmentRepository.save(appointment);
+
+        return modelMapper.map(
+                savedAppointment,
+                AppointmentResponseDto.class
+        );
+    }
+
+
+
+    @Transactional
         public Appointment reAssignAppointmentToAnotherDoctor(Long appointmentId, Long doctorId) {
             Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
                     () ->
@@ -75,6 +139,7 @@ public class AppointmentService {
             return appointment;
         }
 
+        @Transactional(readOnly = true)
         public List<AppointmentResponseDto> getAllAppointmentsOfDoctor(Long doctorId) {
             Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() ->
                     new ResourceNotFoundException(
@@ -87,26 +152,28 @@ public class AppointmentService {
                     .collect(Collectors.toList());
         }
 
+        @Transactional(readOnly = true)
     public List<AppointmentResponseDto> getMyAppointments(String username) {
 
-        Patient patient = patientRepository
-                .findByUserUsername(username)
+        Patient patient = patientRepository.findByUserUsername(username)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Patient profile not found"
-                        )
+                        new ResourceNotFoundException("Patient not found")
                 );
 
-        return appointmentRepository.findByPatientId(patient.getId())
-                .stream()
+        List<Appointment> appointments =
+                appointmentRepository.findByPatientIdWithDoctor(patient.getId());
+
+        return appointments.stream()
                 .map(appointment ->
                         modelMapper.map(
                                 appointment,
                                 AppointmentResponseDto.class
                         )
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
+
+    @Transactional(readOnly = true)
     public AppointmentResponseDto getAppointmentById(Long appointmentId) {
 
         Appointment appointment = appointmentRepository
@@ -124,6 +191,8 @@ public class AppointmentService {
     }
 
 
+
+    @Transactional(readOnly = true)
     public Page<AppointmentResponseDto> getAllAppointments(
             int pageNumber,
             int pageSize,
@@ -147,6 +216,7 @@ public class AppointmentService {
                         )
         );
     }
+
 
     @Transactional
     public AppointmentResponseDto updateAppointment(
