@@ -33,7 +33,10 @@ public class AuthService {
 
         String token=authUtil.generateAccessToken(user);
 
-        return new LoginResponseDto(token,user.getId());
+        return new LoginResponseDto(token,
+                user.getId(),
+                user.getRole().name()
+        );
     }
 
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {

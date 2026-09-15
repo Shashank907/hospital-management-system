@@ -10,4 +10,6 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
     boolean existsByAppointmentId(Long appointmentId);
 
     List<Bill> findByPatientId(Long patientId);
+
+    List<Bill> findByPatientUserUsername(String username);
 }

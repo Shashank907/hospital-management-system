@@ -87,4 +87,19 @@ public class AppointmentController {
                 )
         );
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
+    @PatchMapping("/{appointmentId}/doctor/{doctorId}")
+    public ResponseEntity<AppointmentResponseDto> reassignDoctor(
+            @PathVariable Long appointmentId,
+            @PathVariable Long doctorId
+    ) {
+
+        return ResponseEntity.ok(
+                appointmentService.reAssignAppointmentToAnotherDoctor(
+                        appointmentId,
+                        doctorId
+                )
+        );
+    }
 }

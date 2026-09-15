@@ -13,6 +13,7 @@ import com.shashankcdr.hospitalSystem.repository.AppointmentRepository;
 import com.shashankcdr.hospitalSystem.repository.DoctorRepository;
 import com.shashankcdr.hospitalSystem.repository.PatientRepository;
 import org.springframework.transaction.annotation.Transactional;
+import com.shashankcdr.hospitalSystem.exception.ConflictException;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -96,7 +97,14 @@ public class AppointmentService {
                                 "Doctor not found with ID: " + request.getDoctorId()
                         )
                 );
+        if (appointmentRepository.existsByDoctorIdAndAppointmentTime(
+                request.getDoctorId(),
+                request.getAppointmentTime())) {
 
+            throw new ConflictException(
+                    "Doctor already has an appointment at this time"
+            );
+        }
         Appointment appointment = Appointment.builder()
                 .reason(request.getReason())
                 .appointmentTime(request.getAppointmentTime())
@@ -120,7 +128,7 @@ public class AppointmentService {
 
 
     @Transactional
-        public Appointment reAssignAppointmentToAnotherDoctor(Long appointmentId, Long doctorId) {
+        public AppointmentResponseDto  reAssignAppointmentToAnotherDoctor(Long appointmentId, Long doctorId) {
             Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
                     () ->
                             new ResourceNotFoundException(
@@ -132,11 +140,23 @@ public class AppointmentService {
                             "Doctor not found with ID: " + doctorId
                     ));
 
+        // Prevent double-booking
+        if (appointmentRepository.existsByDoctorIdAndAppointmentTimeAndIdNot(
+                doctorId,
+                appointment.getAppointmentTime(),
+                appointmentId
+        )) {
+            throw new ConflictException(
+                    "Doctor already has an appointment at this time"
+            );
+        }
             appointment.setDoctor(doctor); // this will automatically call the update, because it is dirty
 
             doctor.getAppointments().add(appointment); // just for bidirectional consistency
 
-            return appointment;
+            return modelMapper.map(
+                    appointment, AppointmentResponseDto.class
+            );
         }
 
         @Transactional(readOnly = true)
@@ -239,6 +259,17 @@ public class AppointmentService {
                                 "Doctor not found with ID: " + request.getDoctorId()
                         )
                 );
+
+        // Prevent double-booking
+        if (appointmentRepository.existsByDoctorIdAndAppointmentTimeAndIdNot(
+                request.getDoctorId(),
+                request.getAppointmentTime(),
+                appointmentId
+        )) {
+            throw new ConflictException(
+                    "Doctor already has an appointment at this time"
+            );
+        }
 
         appointment.setDoctor(doctor);
         appointment.setReason(request.getReason());

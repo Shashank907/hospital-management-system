@@ -1,6 +1,6 @@
 package com.shashankcdr.hospitalSystem.dto;
 
-import com.shashankcdr.hospitalSystem.entity.type.BloodGroupType;
+
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

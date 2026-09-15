@@ -1,3 +1,4 @@
+
 package com.shashankcdr.hospitalSystem.service;
 
 import com.shashankcdr.hospitalSystem.dto.BillResponseDto;
@@ -54,6 +55,7 @@ public class BillService {
 
         return mapToResponse(savedBill);
     }
+
     @Transactional(readOnly = true)
     public BillResponseDto getBillById(Long billId) {
 
@@ -73,7 +75,6 @@ public class BillService {
                 .toList();
     }
 
-
     @Transactional
     public BillResponseDto updatePaymentStatus(
             Long billId,
@@ -88,6 +89,15 @@ public class BillService {
         Bill updatedBill = billRepository.save(bill);
 
         return mapToResponse(updatedBill);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BillResponseDto> getMyBills(String username) {
+
+        return billRepository.findByPatientUserUsername(username)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     private BillResponseDto mapToResponse(Bill bill) {
@@ -106,3 +116,5 @@ public class BillService {
         );
     }
 }
+
+

@@ -1,0 +1,17 @@
+package com.shashankcdr.hospitalSystem.prescription.repository;
+
+import com.shashankcdr.hospitalSystem.prescription.entity.Prescription;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface PrescriptionRepository extends JpaRepository<Prescription, Long> {
+
+    List<Prescription> findByPatientId(Long patientId);
+
+    List<Prescription> findByDoctorId(Long doctorId);
+
+    boolean existsByAppointmentId(Long appointmentId);
+
+    List<Prescription> findByPatientUserUsername(String username);
+}

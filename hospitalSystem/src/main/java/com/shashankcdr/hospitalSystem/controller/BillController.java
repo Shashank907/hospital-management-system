@@ -2,13 +2,13 @@ package com.shashankcdr.hospitalSystem.controller;
 
 import com.shashankcdr.hospitalSystem.dto.BillResponseDto;
 import com.shashankcdr.hospitalSystem.dto.CreateBillRequestDto;
-import com.shashankcdr.hospitalSystem.entity.type.PaymentStatus;
 import com.shashankcdr.hospitalSystem.service.BillService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +20,7 @@ public class BillController {
 
     private final BillService billService;
 
+    // ADMIN / RECEPTIONIST
     @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     @PostMapping
     public ResponseEntity<BillResponseDto> createBill(
@@ -30,6 +31,7 @@ public class BillController {
                 .body(billService.createBill(request));
     }
 
+    // ADMIN / DOCTOR / RECEPTIONIST
     @GetMapping("/{billId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'RECEPTIONIST')")
     public ResponseEntity<BillResponseDto> getBillById(
@@ -39,6 +41,8 @@ public class BillController {
                 billService.getBillById(billId)
         );
     }
+
+    // ADMIN / DOCTOR / RECEPTIONIST
     @GetMapping("/patient/{patientId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'RECEPTIONIST')")
     public ResponseEntity<List<BillResponseDto>> getBillsByPatient(
@@ -49,5 +53,16 @@ public class BillController {
         );
     }
 
+    // PATIENT - own bills
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<List<BillResponseDto>> getMyBills(
+            Authentication authentication) {
 
+        String username = authentication.getName();
+
+        return ResponseEntity.ok(
+                billService.getMyBills(username)
+        );
+    }
 }
