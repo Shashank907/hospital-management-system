@@ -1,5 +1,6 @@
 package com.shashankcdr.hospitalSystem.entity;
 
+import com.shashankcdr.hospitalSystem.billing.entity.Bill;
 import com.shashankcdr.hospitalSystem.entity.type.PaymentMethod;
 import com.shashankcdr.hospitalSystem.entity.type.PaymentStatus;
 import jakarta.persistence.*;

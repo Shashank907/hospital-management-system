@@ -2,11 +2,11 @@ package com.shashankcdr.hospitalSystem.service;
 
 import com.shashankcdr.hospitalSystem.dto.CreatePaymentRequestDto;
 import com.shashankcdr.hospitalSystem.dto.PaymentResponseDto;
-import com.shashankcdr.hospitalSystem.entity.Bill;
+import com.shashankcdr.hospitalSystem.billing.entity.Bill;
 import com.shashankcdr.hospitalSystem.entity.Payment;
 import com.shashankcdr.hospitalSystem.entity.type.PaymentStatus;
 import com.shashankcdr.hospitalSystem.exception.ResourceNotFoundException;
-import com.shashankcdr.hospitalSystem.repository.BillRepository;
+import com.shashankcdr.hospitalSystem.billing.repository.BillRepository;
 import com.shashankcdr.hospitalSystem.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
