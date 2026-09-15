@@ -1,6 +1,6 @@
 package com.shashankcdr.hospitalSystem.patient.dto;
 
-import com.shashankcdr.hospitalSystem.entity.type.BloodGroupType;
+import com.shashankcdr.hospitalSystem.common.entity.type.BloodGroupType;
 import lombok.Data;
 
 import java.time.LocalDate;

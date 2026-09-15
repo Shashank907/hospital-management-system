@@ -1,7 +1,7 @@
 
 package com.shashankcdr.hospitalSystem.billing.dto;
 
-import com.shashankcdr.hospitalSystem.entity.type.PaymentStatus;
+import com.shashankcdr.hospitalSystem.common.entity.type.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

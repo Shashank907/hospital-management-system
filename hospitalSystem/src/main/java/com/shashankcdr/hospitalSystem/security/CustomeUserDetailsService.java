@@ -1,6 +1,6 @@
 package com.shashankcdr.hospitalSystem.security;
 
-import com.shashankcdr.hospitalSystem.repository.UserRepository;
+import com.shashankcdr.hospitalSystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,9 +1,9 @@
 package com.shashankcdr.hospitalSystem.patient.entity;
 
 import com.shashankcdr.hospitalSystem.appointment.entity.Appointment;
-import com.shashankcdr.hospitalSystem.entity.Insurance;
-import com.shashankcdr.hospitalSystem.entity.User;
-import com.shashankcdr.hospitalSystem.entity.type.BloodGroupType;
+import com.shashankcdr.hospitalSystem.insurance.entity.Insurance;
+import com.shashankcdr.hospitalSystem.user.entity.User;
+import com.shashankcdr.hospitalSystem.common.entity.type.BloodGroupType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

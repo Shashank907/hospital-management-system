@@ -1,7 +1,8 @@
 package com.shashankcdr.hospitalSystem.security;
 
-import com.shashankcdr.hospitalSystem.entity.User;
-import com.shashankcdr.hospitalSystem.repository.UserRepository;
+import com.shashankcdr.hospitalSystem.config.AuthUtil;
+import com.shashankcdr.hospitalSystem.user.entity.User;
+import com.shashankcdr.hospitalSystem.user.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,7 +1,7 @@
 package com.shashankcdr.hospitalSystem.appointment.dto;
 
-import com.shashankcdr.hospitalSystem.dto.DoctorResponseDto;
-import com.shashankcdr.hospitalSystem.entity.type.AppointmentStatus;
+import com.shashankcdr.hospitalSystem.doctor.dto.DoctorResponseDto;
+import com.shashankcdr.hospitalSystem.common.entity.type.AppointmentStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;

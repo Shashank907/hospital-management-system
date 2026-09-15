@@ -2,18 +2,18 @@ package com.shashankcdr.hospitalSystem.appointment.service;
 
 import com.shashankcdr.hospitalSystem.appointment.dto.AppointmentResponseDto;
 import com.shashankcdr.hospitalSystem.appointment.dto.CreateAppointmentRequestDto;
-import com.shashankcdr.hospitalSystem.dto.CreatePatientAppointmentRequestDto;
+import com.shashankcdr.hospitalSystem.patient.dto.CreatePatientAppointmentRequestDto;
 import com.shashankcdr.hospitalSystem.appointment.dto.UpdateAppointmentRequestDto;
 import com.shashankcdr.hospitalSystem.appointment.entity.Appointment;
-import com.shashankcdr.hospitalSystem.entity.Doctor;
-import com.shashankcdr.hospitalSystem.entity.Patient;
-import com.shashankcdr.hospitalSystem.entity.type.AppointmentStatus;
-import com.shashankcdr.hospitalSystem.exception.ResourceNotFoundException;
+import com.shashankcdr.hospitalSystem.doctor.entity.Doctor;
+import com.shashankcdr.hospitalSystem.patient.entity.Patient;
+import com.shashankcdr.hospitalSystem.common.entity.type.AppointmentStatus;
+import com.shashankcdr.hospitalSystem.common.exception.ResourceNotFoundException;
 import com.shashankcdr.hospitalSystem.appointment.repository.AppointmentRepository;
-import com.shashankcdr.hospitalSystem.repository.DoctorRepository;
-import com.shashankcdr.hospitalSystem.repository.PatientRepository;
+import com.shashankcdr.hospitalSystem.doctor.repository.DoctorRepository;
+import com.shashankcdr.hospitalSystem.patient.repository.PatientRepository;
 import org.springframework.transaction.annotation.Transactional;
-import com.shashankcdr.hospitalSystem.exception.ConflictException;
+import com.shashankcdr.hospitalSystem.common.exception.ConflictException;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

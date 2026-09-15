@@ -1,7 +1,7 @@
 package com.shashankcdr.hospitalSystem.doctor.entity;
 
 import com.shashankcdr.hospitalSystem.appointment.entity.Appointment;
-import com.shashankcdr.hospitalSystem.entity.Department;
+import com.shashankcdr.hospitalSystem.department.entity.Department;
 import jakarta.persistence.*;
 import lombok.*;
 

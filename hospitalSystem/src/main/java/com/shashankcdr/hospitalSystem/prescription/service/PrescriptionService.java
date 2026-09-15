@@ -4,12 +4,12 @@ import com.shashankcdr.hospitalSystem.prescription.dto.CreatePrescriptionRequest
 import com.shashankcdr.hospitalSystem.prescription.dto.PrescriptionMedicineRequestDto;
 import com.shashankcdr.hospitalSystem.prescription.dto.PrescriptionMedicineResponseDto;
 import com.shashankcdr.hospitalSystem.prescription.dto.PrescriptionResponseDto;
-import com.shashankcdr.hospitalSystem.entity.Appointment;
+import com.shashankcdr.hospitalSystem.appointment.entity.Appointment;
 import com.shashankcdr.hospitalSystem.prescription.entity.Prescription;
 import com.shashankcdr.hospitalSystem.prescription.entity.PrescriptionMedicine;
-import com.shashankcdr.hospitalSystem.exception.ResourceAlreadyExistsException;
-import com.shashankcdr.hospitalSystem.exception.ResourceNotFoundException;
-import com.shashankcdr.hospitalSystem.repository.AppointmentRepository;
+import com.shashankcdr.hospitalSystem.common.exception.ResourceAlreadyExistsException;
+import com.shashankcdr.hospitalSystem.common.exception.ResourceNotFoundException;
+import com.shashankcdr.hospitalSystem.appointment.repository.AppointmentRepository;
 import com.shashankcdr.hospitalSystem.prescription.repository.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

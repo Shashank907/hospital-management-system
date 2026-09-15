@@ -1,8 +1,8 @@
 package com.shashankcdr.hospitalSystem.prescription.entity;
 
-import com.shashankcdr.hospitalSystem.entity.Appointment;
-import com.shashankcdr.hospitalSystem.entity.Doctor;
-import com.shashankcdr.hospitalSystem.entity.Patient;
+import com.shashankcdr.hospitalSystem.appointment.entity.Appointment;
+import com.shashankcdr.hospitalSystem.doctor.entity.Doctor;
+import com.shashankcdr.hospitalSystem.patient.entity.Patient;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

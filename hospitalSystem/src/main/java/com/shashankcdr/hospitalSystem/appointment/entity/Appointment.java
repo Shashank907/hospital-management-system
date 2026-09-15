@@ -1,8 +1,8 @@
 package com.shashankcdr.hospitalSystem.appointment.entity;
 
-import com.shashankcdr.hospitalSystem.entity.Doctor;
-import com.shashankcdr.hospitalSystem.entity.Patient;
-import com.shashankcdr.hospitalSystem.entity.type.AppointmentStatus;
+import com.shashankcdr.hospitalSystem.doctor.entity.Doctor;
+import com.shashankcdr.hospitalSystem.patient.entity.Patient;
+import com.shashankcdr.hospitalSystem.common.entity.type.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

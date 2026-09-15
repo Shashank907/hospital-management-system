@@ -1,7 +1,7 @@
 package com.shashankcdr.hospitalSystem.patient.repository;
 
 import com.shashankcdr.hospitalSystem.patient.entity.Patient;
-import com.shashankcdr.hospitalSystem.entity.type.BloodGroupType;
+import com.shashankcdr.hospitalSystem.common.entity.type.BloodGroupType;
 
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;

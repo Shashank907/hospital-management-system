@@ -2,7 +2,7 @@ package com.shashankcdr.hospitalSystem.insurance.service;
 
 import com.shashankcdr.hospitalSystem.insurance.entity.Insurance;
 import com.shashankcdr.hospitalSystem.patient.entity.Patient;
-import com.shashankcdr.hospitalSystem.exception.ResourceNotFoundException;
+import com.shashankcdr.hospitalSystem.common.exception.ResourceNotFoundException;
 import com.shashankcdr.hospitalSystem.insurance.repository.InsuranceRepository;
 import com.shashankcdr.hospitalSystem.patient.repository.PatientRepository;
 import jakarta.transaction.Transactional;
