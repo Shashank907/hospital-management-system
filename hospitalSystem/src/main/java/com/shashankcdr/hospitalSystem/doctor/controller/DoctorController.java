@@ -1,7 +1,7 @@
-package com.shashankcdr.hospitalSystem.controller;
+package com.shashankcdr.hospitalSystem.doctor.controller;
 
-import com.shashankcdr.hospitalSystem.dto.AppointmentResponseDto;
-import com.shashankcdr.hospitalSystem.service.AppointmentService;
+import com.shashankcdr.hospitalSystem.appointment.dto.AppointmentResponseDto;
+import com.shashankcdr.hospitalSystem.appointment.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
